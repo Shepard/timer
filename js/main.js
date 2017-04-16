@@ -9,7 +9,8 @@ let currentTimer = null;
 
 let lastTimeout = DEFAULT_TIMEOUT;
 
-function RunningTimer(timeout, updateCallback, finishedCallback, pausedCallback, continueCallback, stoppedCallback) {
+function RunningTimer(timeout, updateCallback, finishedCallback, pausedCallback,
+		continueCallback, stoppedCallback) {
 	this.timeout = timeout;
 	this.updateCallback = updateCallback;
 	this.finishedCallback = finishedCallback;
@@ -93,11 +94,13 @@ RunningTimer.prototype.stop = function() {
 	this.stoppedCallback(this);
 };
 
-function startTimer(timeout, updateCallback, finishedCallback, pausedCallback, continueCallback, stoppedCallback) {
+function startTimer(timeout, updateCallback, finishedCallback, pausedCallback,
+		continueCallback, stoppedCallback) {
 	if (currentTimer != null && currentTimer.state == "RUNNING") {
 		currentTimer.stop();
 	}
-	currentTimer = new RunningTimer(timeout, updateCallback, finishedCallback, pausedCallback, continueCallback, stoppedCallback);
+	currentTimer = new RunningTimer(timeout, updateCallback, finishedCallback,
+		pausedCallback, continueCallback, stoppedCallback);
 	currentTimer.start();
 }
 
@@ -116,17 +119,59 @@ function toTimeString(milliseconds) {
 	const secondsString = pad(timeDescriptor[2], 2);
 	const minutesString = pad(timeDescriptor[1], 2);
 	const hoursString = pad(timeDescriptor[0], 2);
-	return hoursString + ":" + minutesString + ":" + secondsString + "." + timeDescriptor[3];
+	return hoursString + ":" + minutesString + ":" + secondsString + "." +
+		timeDescriptor[3];
 }
 
 function pad(number, numberOfDigits) {
 	number = number + "";
-	return number.length >= numberOfDigits ? number : new Array(numberOfDigits - number.length + 1).join("0") + number;
+	return number.length >= numberOfDigits ? number : new Array(numberOfDigits -
+		number.length + 1).join("0") + number;
 }
 
 function getDigit(number, index) {
 	number = pad(number, 2);
 	return number.charAt(index);
+}
+
+const audioContext = (window.AudioContext || window.webkitAudioContext) ?
+	new (window.AudioContext || window.webkitAudioContext)() : null;
+
+function beep() {
+	if (audioContext) {
+		return new Promise(function(resolve, reject) {
+			const oscillator = audioContext.createOscillator();
+			const gainNode = audioContext.createGain();
+
+			oscillator.connect(gainNode);
+			gainNode.connect(audioContext.destination);
+
+			gainNode.gain.value = 1;
+			oscillator.frequency.value = 1000;
+			oscillator.type = "sawtooth";
+			oscillator.onended = resolve;
+
+			oscillator.start();
+			setTimeout(function() {
+				oscillator.stop();
+			}, 300);
+		});
+	} else {
+		return Promise.resolve(true);
+	}
+}
+
+function alarm() {
+	let promise = beep();
+	for (let i = 0; i < 3; i++) {
+		promise = promise.then(function() {
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					resolve();
+				}, 250);
+			});
+		}).then(beep);
+	}
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -163,7 +208,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (animate) {
 				element.dataset.previousDigit = element.textContent;
 				element.classList.remove("animate");
-				// Trigger reflow by requesting a property to make removing the class take effect.
+				// Trigger reflow by requesting a property to make removing the
+				// class take effect.
 				element.offsetHeight;
 				element.classList.add("animate");
 			}
@@ -180,8 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	function finished(timer) {
 		btnStartPause.textContent = btnStartPause.dataset.startLabel;
-		// TODO beep
-		alert("BEEP BEEP!");
+		alarm();
 		outStateDebug.textContent = timer.state;
 		// currentTimer = null;
 	}
@@ -208,7 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			currentTimer.continue();
 		} else {
 			btnStartPause.textContent = btnStartPause.dataset.pauseLabel;
-			startTimer(lastTimeout, update, finished, paused, continueCallback, stopped);
+			startTimer(lastTimeout, update, finished, paused, continueCallback,
+				stopped);
 		}
 	}, false);
 
@@ -269,7 +315,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		let hours = inHours.valueAsNumber;
 		let minutes = inMinutes.valueAsNumber;
 		let seconds = inSeconds.valueAsNumber;
-		lastTimeout = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000;
+		lastTimeout = hours * 60 * 60 * 1000 + minutes * 60 * 1000
+			+ seconds * 1000;
 
 		if (currentTimer) {
 			if (currentTimer.state == "RUNNING") {
