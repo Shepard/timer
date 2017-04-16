@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<title>Timer</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="css/main.css" />
+	<script src="js/main.js"></script>
+</head>
+<body>
+
+<div class="time-display"
+	><div class="time-display-section time-display-section-hours"
+		><div class="time-display-section-inner"><output id="out--hours-1">0</output></div></div
+	><div class="time-display-divider">:</div
+	><div class="time-display-section time-display-section-minutes"
+		><div class="time-display-section-inner"><output id="out--minutes-1">0</output
+		><output id="out--minutes-2">0</output></div></div
+	><div class="time-display-divider">:</div
+	><div class="time-display-section time-display-section-seconds"
+		><div class="time-display-section-inner"><output id="out--seconds-1">0</output
+		><output id="out--seconds-2">0</output></div></div
+	><div class="time-display-divider">&middot;</div
+	><div class="time-display-section time-display-section-second-fraction"
+		><div class="time-display-section-inner"><output id="out--second-fraction-1">0</output
+	></div></div
+></div>
+
+<div class="controls"
+	><button type="button" id="btn--reset">Reset</button
+	><button type="button" id="btn--start-pause" data-start-label="Start"
+		data-pause-label="Stop">Start</button
+></div>
+
+<output id="out--state-debug"></output>
+
+</body>
+</html>

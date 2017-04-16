@@ -1,0 +1,3 @@
+target:
+- chrome 46
+- firefox 47

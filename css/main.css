@@ -1,0 +1,127 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #212529;
+	color: white;
+	font-family: sans-serif;
+}
+
+.time-display {
+	display: flex;
+	font-size: 18vw;
+	line-height: 1.7;
+}
+
+.time-display-section {
+	flex-grow: 1;
+	background-color: #343a40;
+	text-align: center;
+}
+
+/* This div is needed because otherwise the ::after content of the sections will
+break the positioning of the outputs during animation. */
+.time-display-section-inner {
+	overflow-y: hidden;
+	position: relative;
+	/* Have to give this explicit dimensions, otherwise the outputs can't be
+	positioned either, see <http://stackoverflow.com/a/28238276>. */
+	width: 100%;
+	height: calc(100% - 20px);
+}
+
+.time-display-section::after {
+	display: block;
+	font-size: 12px;
+	line-height: 20px;
+	text-align: right;
+	background-color: #212529;
+}
+
+.time-display-section-hours::after {
+	content: "hours";
+}
+
+.time-display-section-hours:lang(de)::after {
+	content: "Stunden";
+}
+
+.time-display-section-minutes::after {
+	content: "minutes";
+}
+
+.time-display-section-minutes:lang(de)::after {
+	content: "Minuten";
+}
+
+.time-display-section-seconds::after {
+	content: "seconds";
+}
+
+.time-display-section-seconds:lang(de)::after {
+	content: "Sekunden";
+}
+
+.time-display-section-second-fraction::after {
+	content: "1/10";
+}
+
+.time-display-section output {
+	position: relative;
+}
+
+.time-display-section output.animate {
+	animation-duration: 300ms;
+	animation-name: slidein;
+}
+
+.time-display-section output.animate::after {
+	content: attr(data-previous-digit);
+	position: absolute;
+	top: 125%;
+	left: 0;
+}
+
+@keyframes slidein {
+	from {
+		top: -100%;
+	}
+
+	to {
+		top: 0%;
+	}
+}
+
+.time-display-divider {
+}
+
+.controls {
+	margin-top: 1em;
+}
+
+.controls button {
+	width: calc(50% - 0.5em);
+	box-sizing: border-box;
+}
+
+.controls button + button {
+	margin-left: 1em;
+}
+
+button {
+	border: none;
+	outline: none;
+	padding: 1em;
+	background-color: #495057;
+	color: white;
+	font-family: sans-serif;
+	font-size: 20px;
+	text-transform: uppercase;
+}
+
+/* TODO Feedback when the button got pressed */
+
+#out--state-debug {
+	display: block;
+	margin-top: 2em;
+	font-family: monospace;
+}
