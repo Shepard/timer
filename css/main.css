@@ -97,14 +97,40 @@ break the positioning of the outputs during animation. */
 }
 
 button {
+	position: relative;
 	border: none;
 	outline: none;
 	padding: 1em;
+	overflow: hidden;
 	background-color: #495057;
 	color: white;
 	font-family: sans-serif;
 	font-size: 20px;
 	text-transform: uppercase;
+	cursor: pointer;
+}
+
+button:after {
+	content: "";
+	background: #868e96;
+	display: block;
+	position: absolute;
+	top: calc((100% - 100vw) / 2);
+	left: calc((100% - 100vw) / 2);
+	width: 100vw;
+	height: 100vw;
+	border-radius: 50%;
+	opacity: 0;
+	transition: all 0.3s;
+}
+
+button:active:after {
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	opacity: 1;
+	transition: 0s;
 }
 
 .controls {
@@ -119,8 +145,6 @@ button {
 .controls button + button {
 	margin-left: 1em;
 }
-
-/* TODO Feedback when the button got pressed */
 
 .timer-list {
 	margin-top: 1em;
