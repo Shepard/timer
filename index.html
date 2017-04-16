@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+	<meta charset="UTF-8">
 	<title>Timer</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<link rel="stylesheet" href="css/main.css" />
@@ -30,6 +31,23 @@
 	><button type="button" id="btn--start-pause" data-start-label="Start"
 		data-pause-label="Stop">Start</button
 ></div>
+
+<div class="timer-list">
+	<button type="button" id="btn--new-timer">Neu</button>
+</div>
+
+<div id="dialogs">
+	<dialog id="timer-dialog">
+		<form method="dialog" id="frm--set-timeout">
+			<div class="time-selector">
+				<input type="number" id="in--hours" min="0" max="9" step="1" value="0" required>
+				<input type="number" id="in--minutes" min="0" max="59" step="1" value="10" required>
+				<input type="number" id="in--seconds" min="0" max="59" step="1" value="0" required>
+			</div>
+			<button type="submit" id="btn--accept-countdown">Countdown übernehmen</button>
+		</form>
+	</dialog>
+</div>
 
 <output id="out--state-debug"></output>
 

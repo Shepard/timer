@@ -7,6 +7,8 @@ const RESOLUTION = 50;
 
 let currentTimer = null;
 
+let lastTimeout = DEFAULT_TIMEOUT;
+
 function RunningTimer(timeout, updateCallback, finishedCallback, pausedCallback, continueCallback, stoppedCallback) {
 	this.timeout = timeout;
 	this.updateCallback = updateCallback;
@@ -137,6 +139,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	const outSeconds1 = document.getElementById("out--seconds-1");
 	const outSeconds2 = document.getElementById("out--seconds-2");
 	const outSecondFraction1 = document.getElementById("out--second-fraction-1");
+	const btnNew = document.getElementById("btn--new-timer");
+	const dialogsContainer = document.getElementById("dialogs");
+	const dialogs = document.querySelectorAll("#dialogs dialog");
+	const dialogTimer = document.getElementById("timer-dialog");
+	const frmSetTimeout = document.getElementById("frm--set-timeout");
+	const inHours = document.getElementById("in--hours");
+	const inMinutes = document.getElementById("in--minutes");
+	const inSeconds = document.getElementById("in--seconds");
 
 	function updateTimeDisplay(milliseconds, animate) {
 		const timeDescriptor = toTimeDescriptor(milliseconds);
@@ -161,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
-	updateTimeDisplay(DEFAULT_TIMEOUT);
+	updateTimeDisplay(lastTimeout);
 
 	function update(timer) {
 		updateTimeDisplay(timer.timeoutLeft, true);
@@ -198,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			currentTimer.continue();
 		} else {
 			btnStartPause.textContent = btnStartPause.dataset.pauseLabel;
-			startTimer(DEFAULT_TIMEOUT, update, finished, paused, continueCallback, stopped);
+			startTimer(lastTimeout, update, finished, paused, continueCallback, stopped);
 		}
 	}, false);
 
@@ -210,6 +220,66 @@ document.addEventListener("DOMContentLoaded", () => {
 			currentTimer = null;
 		}
 
-		updateTimeDisplay(DEFAULT_TIMEOUT, true);
+		updateTimeDisplay(lastTimeout, true);
+	}, false);
+
+	function openTimerDialog() {
+		if (currentTimer) {
+			currentTimer.pause();
+		}
+
+		document.body.classList.add("dialog-open");
+		const dialog = document.getElementById("timer-dialog");
+		dialog.classList.add("dialog-open");
+	}
+
+	function closeDialogs() {
+		document.body.classList.remove("dialog-open");
+		dialogs.forEach((dialog) => {
+			dialog.classList.remove("dialog-open");
+			const event = new Event("closed");
+			dialog.dispatchEvent(event);
+		});
+	}
+
+	btnNew.addEventListener("click", () => {
+		openTimerDialog();
+	}, false);
+
+	/* Close dialogs when clicking on backdrop. */
+	dialogsContainer.addEventListener("click", () => {
+		closeDialogs();
+	}, false);
+
+	/* Prevent dialogs container from receiving click that would close dialogs
+	when clicking inside the dialog. */
+	dialogs.forEach((dialog) => {
+		dialog.addEventListener("click", (event) => {
+			event.stopPropagation();
+		}, false);
+	});
+
+	dialogTimer.addEventListener("closed", (event) => {
+		if (currentTimer) {
+			currentTimer.continue();
+		}
+	}, false);
+
+	frmSetTimeout.addEventListener("submit", (event) => {
+		let hours = inHours.valueAsNumber;
+		let minutes = inMinutes.valueAsNumber;
+		let seconds = inSeconds.valueAsNumber;
+		lastTimeout = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000;
+
+		if (currentTimer) {
+			if (currentTimer.state == "RUNNING") {
+				currentTimer.stop();
+			}
+			currentTimer = null;
+		}
+
+		closeDialogs();
+		updateTimeDisplay(lastTimeout, true);
+		event.preventDefault();
 	}, false);
 });
