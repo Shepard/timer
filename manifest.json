@@ -1,0 +1,21 @@
+{
+	"short_name": "Timer",
+	"name": "Timer",
+	"start_url": "index.html?webapp=true",
+	"display": "standalone",
+	"orientation": "portrait-primary",
+	"background_color": "#212529",
+	"theme_color": "#00ACC1",
+	"icons": [
+		{
+			"src": "img/icon.svg",
+			"type": "image/svg+xml",
+			"sizes": "48x48"
+		},
+		{
+			"src": "img/icon.png",
+			"type": "image/png",
+			"sizes": "144x144"
+		},
+	]
+}

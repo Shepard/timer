@@ -330,3 +330,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		event.preventDefault();
 	}, false);
 });
+
+// Install service worker for offline support.
+if ("serviceWorker" in navigator) {
+	navigator.serviceWorker
+		.register("service-worker.js", {
+			scope: "./"
+		})
+		.then(function() {
+			console.log("Service Worker registered.");
+		})
+		.catch(function(error) {
+			console.log("Error registering Service Worker.");
+			console.log(error);
+		});
+} else {
+	console.log("No offline support. :-(");
+}
